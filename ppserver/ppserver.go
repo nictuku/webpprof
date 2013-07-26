@@ -6,19 +6,13 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
+
+	"github.com/nictuku/webpprof/ppcommon"
 )
 
 func init() {
 	http.HandleFunc("/profile", HandlePostProfile)
 
-}
-
-// profile contains the metadata and the raw content of a pprof profile.
-type Profile struct {
-	Name    string
-	Content string
-	Time    time.Time
 }
 
 func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +23,7 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	var profile Profile
+	var profile ppcommon.Profile
 	defer r.Body.Close()
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(&profile)

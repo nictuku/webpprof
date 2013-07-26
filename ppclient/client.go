@@ -1,4 +1,4 @@
-// Package ppclient enables low-overhead heap and CPU profiling and sends them
+// Package ppclient enables low-overhead performance profiling and sends them
 // to a central repository.
 //
 // The profiler may skip profiling cycles if it's not given any CPU cycles,
@@ -29,6 +29,8 @@ import (
 	"runtime/pprof"
 	"strings"
 	"time"
+
+	"github.com/nictuku/webpprof/ppcommon"
 )
 
 const PrrrURL = "http://localhost:8080/profile"
@@ -39,14 +41,7 @@ var (
 )
 var Profiles = []string{"heap", "block", "goroutine", "threadcreate"}
 
-// profile contains the metadata and the raw content of a pprof profile.
-type profile struct {
-	Name    string
-	Content string
-	Time    time.Time
-}
-
-func createProfile(name string) *profile {
+func createProfile(name string) *ppcommon.Profile {
 	buf := new(bytes.Buffer)
 	p := pprof.Lookup(name)
 	if p == nil {
@@ -56,7 +51,7 @@ func createProfile(name string) *profile {
 		return nil
 	}
 	fmt.Println("profile data", buf.String())
-	return &profile{name, buf.String(), time.Now()}
+	return &ppcommon.Profile{name, buf.Bytes(), time.Now()}
 }
 
 func profileURL(name string) string {
@@ -67,7 +62,7 @@ func profileURL(name string) string {
 	return u.String()
 }
 
-func sendProfile(p *profile) error {
+func sendProfile(p *ppcommon.Profile) error {
 	// TODO: Authentication.
 	// TODO: identify the program name and arguments.
 	buf := new(bytes.Buffer)
