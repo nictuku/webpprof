@@ -48,22 +48,20 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 // Schema:
-//
-// CREATE TABLE profiles (user string, profile blob, t time);
-
-func saveProfile(p *Profile) (err error) {
+// CREATE TABLE profiles (user string, name string, content blob, t time);
+func saveProfile(p *ppcommon.Profile) (err error) {
 	tx, err := db.Begin()
 	if err != nil {
 		return
 	}
 	result, err := tx.Exec(`
-		INSERT INTO profiles VALUES ($1, $2, now());`,
-		"yves.junqueira@gmail.com", profile.Content)
+		INSERT INTO profiles VALUES ($1, $2, $3, now());`,
+		"yves.junqueira@gmail.com", p.Name, p.Content)
 
 	if err != nil {
 		return
 	}
-	if err := tx.Commit(); err != nil {
+	if err = tx.Commit(); err != nil {
 		return
 	}
 	id, err := result.LastInsertId()
@@ -77,6 +75,6 @@ func saveProfile(p *Profile) (err error) {
 
 	fmt.Printf("LastInsertId %d, RowsAffected %d\n", id, aff)
 
-	log.Printf("decoded profile: %+q", profile)
+	log.Printf("decoded profile: %+q", p)
 	return
 }
