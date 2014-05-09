@@ -51,7 +51,7 @@ func createProfile(name string) *ppcommon.Profile {
 		return nil
 	}
 	fmt.Println("profile data", buf.String())
-	return &ppcommon.Profile{name, buf.Bytes(), time.Now()}
+	return &ppcommon.Profile{"", name, buf.Bytes(), time.Now()}
 }
 
 func profileURL(name string) string {
