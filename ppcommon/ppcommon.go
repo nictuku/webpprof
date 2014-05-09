@@ -4,8 +4,10 @@ import (
 	"time"
 )
 
-// profile contains the metadata and the raw content of a pprof profile.
+// Profile contains the metadata and the raw content of a pprof profile.
 type Profile struct {
+	// Email or ID of the user who owns this profile.
+	User string
 	// Name of the profile type - e.g: "heap".
 	Name string
 	// Content is the raw profile data content, in pprof format. It's a slice
