@@ -38,8 +38,8 @@ const PrrrURL = "http://localhost:8080/profile"
 var (
 	CPUProfilingInterval = 30 * time.Second
 	CPUProfilingDuration = 5 * time.Second
+	Profiles             = []string{"heap", "block", "goroutine", "threadcreate"}
 )
-var Profiles = []string{"heap", "block", "goroutine", "threadcreate"}
 
 func createProfile(name string) *ppcommon.Profile {
 	buf := new(bytes.Buffer)

@@ -1,4 +1,4 @@
-package ppserver
+package ppstore
 
 import (
 	"database/sql"

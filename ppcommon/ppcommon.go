@@ -15,5 +15,6 @@ type Profile struct {
 	// that StringProperty have. Reference:
 	// http://stackoverflow.com/questions/11178869/overcome-appengine-500-byte-string-limit-in-python-consider-text
 	Content []byte
-	Time    time.Time
+	// Time when the profile was collected.
+	Time time.Time
 }
