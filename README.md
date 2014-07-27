@@ -14,7 +14,8 @@ A subset of the data will be aggregated, anonymized and shared publicly - that
 will probably include stats about GC overhead and the performance of core
 libraries.
 
-= Roadmap =
+Components
+--------
 
 ppclient
   * library for collecting and sending performance profiles
@@ -26,3 +27,29 @@ ppserver
 
 ppstore  
   * server that receives and stores performance profiles
+
+Usage
+------
+Functionality is limited for now. You can start a web pprof server that stores pprofs in a QL database. There is also a test program in ppclient/test that collects and uploads sample profiles. For now, profiles can only be inspected with the ql tool directly.
+
+Install the QL tool:
+
+```
+$ go get github.com/cznic/ql/ql
+# Confirm that the tool is installed.
+$ ql -help
+```
+
+Test server:
+```
+$ go build
+# Create the database.
+$ ql 'CREATE TABLE profiles (user string, name string, content blob, t time);'
+$ ./webpprof
+```
+
+Test client:
+```
+$ cd ppclient/test
+$ go run test_client.go
+```
