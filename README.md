@@ -5,10 +5,11 @@ Go programs.
 
 Programs must import a special library to use webpprof. The library enables
 low-overhead heap and CPU profiling and pushes them as a best effort to a
-central repository, called Prrr.
+central repository. A private repository could also be used.
 
-Prrr stores the data for a few days or weeks, aggregates information about
-different profiles and generates reports.
+The service stores the data for a few days or weeks, aggregates information about
+different profiles and generates reports that can be viewed only by the profiles'
+owner.
 
 A subset of the data will be aggregated, anonymized and shared publicly - that
 will probably include stats about GC overhead and the performance of core
@@ -30,6 +31,8 @@ ppstore
 
 Usage
 ------
+Eventual usage will involve installing a reporting library, then viewing reports on the web.
+
 Functionality is limited for now. You can start a web pprof server that stores pprofs in a QL database. There is also a test program in ppclient/test that collects and uploads sample profiles. For now, profiles can only be inspected with the ql tool directly.
 
 Install the QL tool:
