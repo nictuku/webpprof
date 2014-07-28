@@ -124,7 +124,7 @@ func cpuProfile(w io.Writer, duration time.Duration) error {
 	return nil
 }
 
-func send() {
+func uploadProfiles() {
 	for _, name := range Profiles {
 		fmt.Println(name)
 		if name == "cpu" {
@@ -132,6 +132,7 @@ func send() {
 			if err := cpuProfile(buf, CPUProfilingDuration); err != nil {
 				log.Printf("ppclient cpuProfile error: %v", err)
 			} else {
+				// TODO: Actually send it.
 				sendCPUProfile(buf)
 			}
 		} else {
@@ -154,7 +155,7 @@ func profiler() {
 	log.Println("profiler started")
 	tick := time.Tick(CPUProfilingInterval)
 	for {
-		send()
+		uploadProfiles()
 		<-tick
 
 	}
