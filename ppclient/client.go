@@ -33,7 +33,7 @@ import (
 	"github.com/nictuku/webpprof/ppcommon"
 )
 
-const PrrrURL = "http://localhost:8080/profile"
+const PrrrURL = "http://localhost:8080/write"
 
 var (
 	CPUProfilingInterval = 30 * time.Second

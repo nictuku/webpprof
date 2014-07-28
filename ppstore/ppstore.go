@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"sync"
@@ -18,8 +19,7 @@ var (
 	once sync.Once
 )
 
-// HandlePostProfile receives a pprof profile and stores it.
-func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
+func dbInit() {
 	once.Do(func() {
 		var err error
 		db, err = sql.Open("ql", "ql.db")
@@ -27,7 +27,11 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 			log.Fatalf("db opening error: %v", err)
 		}
 	})
+}
 
+// HandlePostProfile receives a pprof profile and stores it.
+func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
+	dbInit()
 	p := r.FormValue("p")
 	if p == "" {
 		http.NotFound(w, r)
@@ -45,6 +49,17 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// HandleReadProfile shows a requested profile after authentication.
+func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
+	dbInit()
+	readProfile(w, nil)
+}
+
+func readProfile(w io.Writer, p *ppcommon.Profile) error {
+	_, err := fmt.Fprintf(w, "profile\n")
+	return err
 }
 
 // Schema:
