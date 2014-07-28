@@ -53,18 +53,36 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 
 // HandleReadProfile shows a requested profile after authentication.
 func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
-	dbInit()
 	readProfile(w, nil)
 }
 
 func readProfile(w io.Writer, p *ppcommon.Profile) error {
-	_, err := fmt.Fprintf(w, "profile\n")
-	return err
+	dbInit()
+	log.Println("reading")
+	rows, err := db.Query(`SELECT content FROM profiles LIMIT 1;`)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Fprintf(w, "%s\n", name)
+		return nil
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return nil
 }
 
 // Schema:
 // CREATE TABLE profiles (user string, name string, content blob, t time);
 func saveProfile(p *ppcommon.Profile) (err error) {
+	// TODO: Move to Go's sql driver way of doing things.
 	tx, err := db.Begin()
 	if err != nil {
 		return
