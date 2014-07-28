@@ -15,6 +15,12 @@ A subset of the data will be aggregated, anonymized and shared publicly - that
 will probably include stats about GC overhead and the performance of core
 libraries.
 
+Development
+-----------
+
+See the project's [Trello board](https://trello.com/b/djCGWcRD/webpprof).
+
+
 Components
 --------
 
