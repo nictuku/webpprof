@@ -62,29 +62,29 @@ func profileURL(name string) string {
 	return u.String()
 }
 
-func sendProfile(p *ppcommon.Profile) error {
+func uploadProfile(p *ppcommon.Profile) error {
 	// TODO: Authentication.
 	// TODO: identify the program name and arguments.
 	buf := new(bytes.Buffer)
 	enc := json.NewEncoder(buf)
 	err := enc.Encode(p)
 	if err != nil {
-		log.Printf("sendPr enc error %v", err)
+		log.Printf("uploadPr enc error %v", err)
 		return err
 	}
 	req, err := http.NewRequest("POST", profileURL(p.Name), buf)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Printf("sendProfile %v error reading response body: %v", p.Name, err)
+		log.Printf("uploadProfile %v error reading response body: %v", p.Name, err)
 		return err
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Printf("sendProfile %v error reading response body: %v", p.Name, err)
+		log.Printf("uploadProfile %v error reading response body: %v", p.Name, err)
 		return err
 	}
 	resp.Body.Close()
-	log.Println("sendProfile got", string(body))
+	log.Println("uploadProfile got", string(body))
 	return nil
 }
 
@@ -97,7 +97,7 @@ func cmdline() string {
 	return strings.Join(os.Args, "\x00")
 }
 
-func sendCPUProfile(buf *bytes.Buffer) {
+func uploadCPUProfile(buf *bytes.Buffer) {
 	// Send the hpprof to the remote server.
 
 	// TODO: Authentication.
@@ -132,8 +132,8 @@ func uploadProfiles() {
 			if err := cpuProfile(buf, CPUProfilingDuration); err != nil {
 				log.Printf("ppclient cpuProfile error: %v", err)
 			} else {
-				// TODO: Actually send it.
-				sendCPUProfile(buf)
+				// TODO: Actually upload it.
+				uploadCPUProfile(buf)
 			}
 		} else {
 			fmt.Println("creating")
@@ -143,14 +143,14 @@ func uploadProfiles() {
 				log.Printf("createProfile %v returned an empty profile", name)
 				continue
 			}
-			fmt.Println("sending")
-			sendProfile(p)
+			fmt.Println("uploading")
+			uploadProfile(p)
 		}
 	}
 }
 
 // profiler runs in the background, waking up occasionally to collect
-// performance profiles and send them to prrr.
+// performance profiles and upload them to prrr.
 func profiler() {
 	log.Println("profiler started")
 	tick := time.Tick(CPUProfilingInterval)
