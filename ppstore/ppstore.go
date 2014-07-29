@@ -59,7 +59,7 @@ func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
 func readProfile(w io.Writer, p *ppcommon.Profile) error {
 	dbInit()
 	log.Println("reading")
-	rows, err := db.Query(`SELECT content FROM profiles LIMIT 1;`)
+	rows, err := db.Query(`SELECT content FROM profiles WHERE name == "heap" LIMIT 1;`)
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal(err)
