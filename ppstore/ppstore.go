@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	// Install the QL SQL driver.
 	_ "github.com/cznic/ql/driver"
@@ -59,7 +60,7 @@ func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
 func readProfile(w io.Writer, p *ppcommon.Profile) error {
 	dbInit()
 	log.Println("reading")
-	rows, err := db.Query(`SELECT content FROM profiles WHERE name == "heap" LIMIT 1;`)
+	rows, err := db.Query(`SELECT content, t FROM profiles WHERE name == "heap" ORDER BY t DESC LIMIT 1;`)
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal(err)
@@ -67,7 +68,8 @@ func readProfile(w io.Writer, p *ppcommon.Profile) error {
 	defer rows.Close()
 	for rows.Next() {
 		var name string
-		if err := rows.Scan(&name); err != nil {
+		var t time.Time
+		if err := rows.Scan(&name, &t); err != nil {
 			log.Fatal(err)
 		}
 		fmt.Fprintf(w, "%s\n", name)
