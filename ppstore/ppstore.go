@@ -67,12 +67,18 @@ func readProfile(w io.Writer, p *ppcommon.Profile) error {
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var name string
+		var content string
 		var t time.Time
-		if err := rows.Scan(&name, &t); err != nil {
+		if err := rows.Scan(&content, &t); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Fprintf(w, "%s\n", name)
+		raw, err := ppcommon.RawProfile(content)
+		if err != nil {
+			log.Println("RawProfile:", err)
+		} else {
+			content = raw
+		}
+		fmt.Fprintf(w, "%s\n", content)
 		return nil
 	}
 	if err := rows.Err(); err != nil {
