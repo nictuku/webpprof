@@ -12,6 +12,7 @@ import (
 
 	// Install the QL SQL driver.
 	_ "github.com/cznic/ql/driver"
+	"github.com/nictuku/mothership/login"
 	"github.com/nictuku/webpprof/ppcommon"
 )
 
@@ -54,12 +55,20 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 
 // HandleReadProfile shows a requested profile after authentication.
 func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
-	readProfile(w, nil)
+	passport, err := login.CurrentPassport(r)
+	if err != nil {
+		log.Printf("Redirecting to ghlogin: %q. Referrer: %q", err, r.Referer())
+		http.Redirect(w, r, "/ghlogin", http.StatusFound)
+		return
+	}
+	log.Println("login from user", passport.Email)
+	readProfile(w, passport)
 }
 
-func readProfile(w io.Writer, p *ppcommon.Profile) error {
+func readProfile(w io.Writer, passport *login.Passport) error {
 	dbInit()
 	log.Println("reading")
+	// TODO: where user == passport.Email
 	rows, err := db.Query(`SELECT content, t FROM profiles WHERE name == "heap" ORDER BY t DESC LIMIT 1;`)
 	if err != nil {
 		fmt.Println(err)

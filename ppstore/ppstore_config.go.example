@@ -1,0 +1,12 @@
+package ppstore
+
+import "bitbucket.org/gosimple/oauth2"
+
+var ghService = oauth2.Service(
+	// Register your application and obtain a client id and secret:
+	// https://developer.github.com/v3/oauth/
+	clientId,
+	clientSecret,
+	"https://github.com/login/oauth/authorize",
+	"https://github.com/login/oauth/access_token",
+)

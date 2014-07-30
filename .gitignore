@@ -25,3 +25,4 @@ webpprof
 ql.db
 
 ppclient/test/test
+ppstore/ppstore_config.go
