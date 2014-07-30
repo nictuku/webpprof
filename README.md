@@ -1,7 +1,7 @@
 webpprof
 --------
 webpprof is a tool and service that collects and stores profiling data about
-Go programs.
+Go programs. It's a work in progress and not ready for use yet.
 
 Programs must import a special library to use webpprof. The library enables
 low-overhead heap and CPU profiling and pushes them as a best effort to a
