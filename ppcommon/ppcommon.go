@@ -1,6 +1,10 @@
 package ppcommon
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"regexp"
 	"time"
 )
 
@@ -17,4 +21,35 @@ type Profile struct {
 	Content []byte
 	// Time when the profile was collected.
 	Time time.Time
+}
+
+func RawProfile(p string) (raw string, err error) {
+	buf := new(bytes.Buffer)
+	funcs := map[string]string{}
+	re := regexp.MustCompile(`#\s+(0x[^ ]+)\s+([^+ ]+)[+ ]`)
+
+	fmt.Fprintf(buf, "--- symbol\nbinary=unknown\n")
+
+	scanner := bufio.NewScanner(bytes.NewBufferString(p))
+
+	innerBuf := new(bytes.Buffer)
+	for scanner.Scan() {
+		line := scanner.Text()
+		m := re.FindStringSubmatch(line)
+		if m != nil {
+			funcs[m[1]] = m[2]
+		} else {
+			fmt.Fprintf(innerBuf, "%v\n", line)
+		}
+	}
+
+	for pc, f := range funcs {
+		fmt.Fprintf(buf, "%v %v\n", pc, f)
+	}
+	fmt.Fprintf(buf, "---\n%v", innerBuf)
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+
 }
