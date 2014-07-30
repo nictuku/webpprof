@@ -35,21 +35,38 @@ ppserver
 ppstore  
   * server that receives and stores performance profiles
 
-Usage
+Webpprof Usage
 ------
-Eventual usage will involve installing a reporting library, then viewing reports on the web.
-
-Functionality is limited for now. You can start a web pprof server that stores pprofs in a QL database. There is also a test program in ppclient/test that collects and uploads sample profiles. For now, profiles can only be inspected with the ql tool directly.
-
-Install the QL tool:
+Import the ppclient package and start collecting profiles by adding this snippet somewhere in your program.
 
 ```
-$ go get github.com/cznic/ql/ql
-# Confirm that the tool is installed.
-$ ql -help
+package main
+
+import (
+ "log"
+ "github.com/nictuku/webpprof/ppclient"
+)
+
+func main() {
+ // By default, the ppclient collects and transmits profiles every 1 minute.
+ // Use the following to change that to, say, 10 minutes:
+ ppclient.CPUProfilingInterval = 10 * time.Minute
+
+ // Start collecting and transmiting profiles, in the background.
+ if err := ppclient.Start(); err != nil {
+		log.Println("ppclient startup failure:", err)
+	}
+
+	// ... Your program
+}
 ```
 
-Test server:
+The data will be transmitted to a webpprof server. You can use the public one (not yet available) or run your own.
+
+webpprof server
+-------------------
+A central public repository will eventually be available. For now you can run a webpprof server for yourself. The web pprof server stores pprofs in a QL database.
+
 ```
 $ go build
 # Create the database.
@@ -57,8 +74,25 @@ $ ql 'CREATE TABLE profiles (user string, name string, content blob, t time);'
 $ ./webpprof
 ```
 
-Test client:
+Test client
+------------
+There is a test program in ppclient/test that collects and uploads sample profiles. It intentionally leaks memory to make things more interesting.
+
 ```
 $ cd ppclient/test
 $ go run test_client.go
+```
+
+Browsing the data
+------------------
+For now, profiles can only be inspected with the ql tool directly. Install the QL tool:
+
+```
+$ go get github.com/cznic/ql/ql
+# Confirm that the tool is installed.
+$ ql -help
+
+# Inspect the latest heap profile:
+$ ql 'SELECT content, t FROM profiles WHERE name == "heap" ORDER BY t DESC LIMIT 1;'
+
 ```
