@@ -8,8 +8,7 @@ low-overhead heap and CPU profiling and pushes them as a best effort to a
 central repository. A private repository could also be used.
 
 The service stores the data for a few days or weeks, aggregates information about
-different profiles and generates reports that can be viewed only by the profiles'
-owner.
+different profiles and generates reports ([example heap allocation report](http://1.a.magnets.im/static/heap12.svg)) that can be viewed only by the profiles' owner.
 
 A subset of the data will be aggregated, anonymized and shared publicly - that
 will probably include stats about GC overhead and the performance of core
