@@ -8,6 +8,6 @@ import (
 
 func main() {
 	http.HandleFunc("/write", ppstore.HandlePostProfile)
-	http.HandleFunc("/profile", ppstore.HandleReadProfile)
+	http.HandleFunc("/profile", ppstore.HandleAuthReadProfile)
 	http.ListenAndServe(":8080", nil)
 }

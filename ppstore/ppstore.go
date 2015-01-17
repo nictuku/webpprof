@@ -53,8 +53,13 @@ func HandlePostProfile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// HandleReadProfile shows a requested profile after authentication.
+// HandleReadProfile shows a requested profile without authentication..
 func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
+	readProfile(w, nil)
+}
+
+// HandleAuthReadProfile shows a requested profile after authentication.
+func HandleAuthReadProfile(w http.ResponseWriter, r *http.Request) {
 	passport, err := login.CurrentPassport(r)
 	if err != nil {
 		log.Printf("Redirecting to ghlogin: %q. Referrer: %q", err, r.Referer())
@@ -68,11 +73,10 @@ func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
 func readProfile(w io.Writer, passport *login.Passport) error {
 	dbInit()
 	log.Println("reading")
-	// TODO: where user == passport.Email
-	rows, err := db.Query(`SELECT content, t FROM profiles WHERE name == "heap" ORDER BY t DESC LIMIT 1;`)
+	rows, err := db.Query(`SELECT content, t FROM profiles WHERE name == "heap" && user == $1 ORDER BY t DESC LIMIT 1;`, passport.Email)
 	if err != nil {
 		fmt.Println(err)
-		log.Fatal(err)
+		log.Fatalln("QUERY error:", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
