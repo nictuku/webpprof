@@ -91,7 +91,7 @@ $ go get github.com/cznic/ql/ql
 # Confirm that the tool is installed.
 $ ql -help
 
-# Inspect the latest heap profile:
-$ ql 'SELECT content, t FROM profiles WHERE name == "heap" ORDER BY t DESC LIMIT 1;'
+# With the webserver stopped (sorry), inspect the latest heap profile:
+$ ql 'SELECT string(content), t FROM profiles WHERE name == "heap" ORDER BY t DESC LIMIT 1;'
 
 ```
