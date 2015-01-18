@@ -62,7 +62,8 @@ func HandleReadProfile(w http.ResponseWriter, r *http.Request) {
 func HandleAuthReadProfile(w http.ResponseWriter, r *http.Request) {
 	passport, err := login.CurrentPassport(r)
 	if err != nil {
-		log.Printf("Redirecting to ghlogin: %q. Referrer: %q", err, r.Referer())
+		log.Printf("Redirecting to ghlogin: %v. Path: %q. Referrer: %q", err, r.URL.Path, r.Referer())
+		http.SetCookie(w, &http.Cookie{Name: "ref", Value: r.URL.Path})
 		http.Redirect(w, r, "/ghlogin", http.StatusFound)
 		return
 	}
